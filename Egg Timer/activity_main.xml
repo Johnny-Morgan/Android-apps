@@ -39,11 +39,26 @@
         android:layout_marginEnd="176dp"
         android:layout_marginRight="176dp"
         android:layout_marginBottom="256dp"
-        android:textSize="30sp"
+        android:textSize="48sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="@id/imageView"
         app:layout_constraintEnd_toEndOf="@id/imageView"
         app:layout_constraintHorizontal_bias="0.491"
         app:layout_constraintStart_toStartOf="@id/imageView" />
+
+    <Button
+        android:id="@+id/button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="186dp"
+        android:layout_marginLeft="186dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="186dp"
+        android:layout_marginRight="186dp"
+        android:onClick="startTimer"
+        android:text="GO!"
+        app:layout_constraintEnd_toEndOf="@id/timerTextView"
+        app:layout_constraintStart_toStartOf="@id/timerTextView"
+        app:layout_constraintTop_toBottomOf="@id/timerTextView" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
