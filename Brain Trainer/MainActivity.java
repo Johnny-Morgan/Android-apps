@@ -18,35 +18,68 @@ public class MainActivity extends AppCompatActivity {
     TextView choice2;
     TextView choice3;
     TextView choice4;
-    boolean timerOn = false;
+    TextView resultTextView;
+    boolean timerOn;
     Random r = new Random();
+    int correctAnswerGrid = r.nextInt(4);
+    TextView scoreTextView;
 
-    public void generateQuestion(){
+
+    public void answerQuestion(View view) {
+        scoreTextView = findViewById(R.id.scoreTextView);
+        resultTextView = findViewById(R.id.resultTextView);
+        TextView answer = (TextView) view;
+        int tappedAnswer = Integer.parseInt(answer.getTag().toString());
+        if (tappedAnswer == correctAnswerGrid) {
+            correctAnswers++;
+            resultTextView.setText("Correct!");
+            totalAnswers++;
+        } else {
+            resultTextView.setText("Wrong :(");
+            totalAnswers++;
+        }
+
+        scoreTextView.setText(correctAnswers + "/" + totalAnswers);
+        correctAnswerGrid = r.nextInt(4);
+        generateQuestion();
+    }
+
+    public void generateQuestion() {
+        int firstNumber, secondNumber, correctAnswer;
+        int operation = r.nextInt(2); // 0 for addition, 1 for multiplication
         choice1 = findViewById(R.id.choice1TextView);
         choice2 = findViewById(R.id.choice2TextView);
         choice3 = findViewById(R.id.choice3TextView);
         choice4 = findViewById(R.id.choice4TextView);
-        int firstNumber = r.nextInt(30);
-        int secondNumber = r.nextInt(30);
-        int correctAnswer = firstNumber + secondNumber;
-        questionTextView.setText("" + firstNumber + " + " + secondNumber);
-        int correctAnswerGrid = r.nextInt(4);
-        if(correctAnswerGrid == 0){
+
+        if (operation == 0) {
+            firstNumber = r.nextInt(30);
+            secondNumber = r.nextInt(30);
+            correctAnswer = firstNumber + secondNumber;
+            questionTextView.setText("" + firstNumber + " + " + secondNumber);
+        } else {
+            firstNumber = r.nextInt(10);
+            secondNumber = r.nextInt(10);
+            correctAnswer = firstNumber * secondNumber;
+            questionTextView.setText("" + firstNumber + " x " + secondNumber);
+        }
+
+        if (correctAnswerGrid == 0) {
             choice1.setText("" + correctAnswer);
             choice2.setText("" + r.nextInt(100));
             choice3.setText("" + r.nextInt(100));
             choice4.setText("" + r.nextInt(100));
-        } else if (correctAnswerGrid == 1){
+        } else if (correctAnswerGrid == 1) {
             choice1.setText("" + r.nextInt(100));
             choice2.setText("" + correctAnswer);
             choice3.setText("" + r.nextInt(100));
             choice4.setText("" + r.nextInt(100));
-        } else if (correctAnswerGrid == 2){
+        } else if (correctAnswerGrid == 2) {
             choice1.setText("" + r.nextInt(100));
             choice2.setText("" + r.nextInt(100));
             choice3.setText("" + correctAnswer);
             choice4.setText("" + r.nextInt(100));
-        } else{
+        } else {
             choice1.setText("" + r.nextInt(100));
             choice2.setText("" + r.nextInt(100));
             choice3.setText("" + r.nextInt(100));
@@ -55,8 +88,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    public void startTraining(){
-        if(!timerOn) {
+    public void startTraining() {
+        if (!timerOn) {
             timerOn = true;
 
             timerTextView = findViewById(R.id.timerTextView);
@@ -65,7 +98,6 @@ public class MainActivity extends AppCompatActivity {
             CountDownTimer cdt = new CountDownTimer(30_000, 1000) {
                 public void onTick(long l) {
                     timerTextView.setText((l / 1000) + "s");
-
                 }
 
                 public void onFinish() {
@@ -74,16 +106,14 @@ public class MainActivity extends AppCompatActivity {
             }.start();
         }
     }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        startTraining();
-        generateQuestion();
-//        TextView scoreTextView = findViewById(R.id.scoreTextView);
-//        scoreTextView.setText(correctAnswers + "/" + totalAnswers);
 
 
+            startTraining();
 
 
     }
