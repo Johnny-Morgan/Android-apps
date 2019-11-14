@@ -3,9 +3,11 @@ package dev.johnmorgan.braintrainer;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 
 import java.util.Random;
 
@@ -28,20 +30,22 @@ public class MainActivity extends AppCompatActivity {
     public void answerQuestion(View view) {
         scoreTextView = findViewById(R.id.scoreTextView);
         resultTextView = findViewById(R.id.resultTextView);
-        TextView answer = (TextView) view;
-        int tappedAnswer = Integer.parseInt(answer.getTag().toString());
-        if (tappedAnswer == correctAnswerGrid) {
-            correctAnswers++;
-            resultTextView.setText("Correct!");
-            totalAnswers++;
-        } else {
-            resultTextView.setText("Wrong :(");
-            totalAnswers++;
-        }
+        if (timerOn) {
+            TextView answer = (TextView) view;
+            int tappedAnswer = Integer.parseInt(answer.getTag().toString());
+            if (tappedAnswer == correctAnswerGrid) {
+                correctAnswers++;
+                resultTextView.setText("Correct!");
+                totalAnswers++;
+            } else {
+                resultTextView.setText("Wrong :(");
+                totalAnswers++;
+            }
 
-        scoreTextView.setText(correctAnswers + "/" + totalAnswers);
-        correctAnswerGrid = r.nextInt(4);
-        generateQuestion();
+            scoreTextView.setText(correctAnswers + "/" + totalAnswers);
+            correctAnswerGrid = r.nextInt(4);
+            generateQuestion();
+        }
     }
 
     public void generateQuestion() {
@@ -66,27 +70,26 @@ public class MainActivity extends AppCompatActivity {
 
         if (correctAnswerGrid == 0) {
             choice1.setText("" + correctAnswer);
-            choice2.setText("" + r.nextInt(100));
-            choice3.setText("" + r.nextInt(100));
-            choice4.setText("" + r.nextInt(100));
+            choice2.setText("" + r.nextInt(60));
+            choice3.setText("" + r.nextInt(60));
+            choice4.setText("" + r.nextInt(60));
         } else if (correctAnswerGrid == 1) {
-            choice1.setText("" + r.nextInt(100));
+            choice1.setText("" + r.nextInt(60));
             choice2.setText("" + correctAnswer);
-            choice3.setText("" + r.nextInt(100));
-            choice4.setText("" + r.nextInt(100));
+            choice3.setText("" + r.nextInt(60));
+            choice4.setText("" + r.nextInt(60));
         } else if (correctAnswerGrid == 2) {
-            choice1.setText("" + r.nextInt(100));
-            choice2.setText("" + r.nextInt(100));
+            choice1.setText("" + r.nextInt(60));
+            choice2.setText("" + r.nextInt(60));
             choice3.setText("" + correctAnswer);
-            choice4.setText("" + r.nextInt(100));
+            choice4.setText("" + r.nextInt(60));
         } else {
-            choice1.setText("" + r.nextInt(100));
-            choice2.setText("" + r.nextInt(100));
-            choice3.setText("" + r.nextInt(100));
+            choice1.setText("" + r.nextInt(60));
+            choice2.setText("" + r.nextInt(60));
+            choice3.setText("" + r.nextInt(60));
             choice4.setText("" + correctAnswer);
         }
     }
-
 
     public void startTraining() {
         if (!timerOn) {
@@ -94,27 +97,44 @@ public class MainActivity extends AppCompatActivity {
 
             timerTextView = findViewById(R.id.timerTextView);
             questionTextView = findViewById(R.id.questionTextView);
-
-            CountDownTimer cdt = new CountDownTimer(30_000, 1000) {
+            scoreTextView = findViewById(R.id.scoreTextView);
+            scoreTextView.setText("0/0");
+            final Button playAgainButton = findViewById(R.id.playAgainButton);
+            resultTextView = findViewById(R.id.resultTextView);
+            resultTextView.setText("");
+            playAgainButton.setVisibility(View.INVISIBLE);
+            CountDownTimer cdt = new CountDownTimer(15_000, 1000) {
                 public void onTick(long l) {
                     timerTextView.setText((l / 1000) + "s");
                 }
 
                 public void onFinish() {
                     timerOn = false;
+                    resultTextView.setText("Game Over!");
+                    playAgainButton.setVisibility(View.VISIBLE);
                 }
             }.start();
         }
+    }
+
+    public void playAgain(View view){
+        correctAnswers = 0;
+        totalAnswers = 0;
+        startTraining();
+        generateQuestion();
+    }
+
+    public void start(View view){
+        ConstraintLayout gameLayout = findViewById(R.id.gameLayout);
+        Button startButton = findViewById(R.id.startButton);
+        startButton.setVisibility(View.INVISIBLE);
+        gameLayout.setVisibility(View.VISIBLE);
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-
-            startTraining();
-
-
+        playAgain(questionTextView); // no particular reason for choosing questionTextView
     }
 }
