@@ -9,6 +9,8 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 public class MainActivity extends AppCompatActivity {
@@ -25,7 +27,7 @@ public class MainActivity extends AppCompatActivity {
     Random r = new Random();
     int correctAnswerGrid = r.nextInt(4);
     TextView scoreTextView;
-
+    List<Integer> answers = new ArrayList<>();
 
     public void answerQuestion(View view) {
         scoreTextView = findViewById(R.id.scoreTextView);
@@ -44,52 +46,58 @@ public class MainActivity extends AppCompatActivity {
 
             scoreTextView.setText(correctAnswers + "/" + totalAnswers);
             correctAnswerGrid = r.nextInt(4);
+            answers.clear();
             generateQuestion();
         }
     }
 
     public void generateQuestion() {
-        int firstNumber, secondNumber, correctAnswer;
-        int operation = r.nextInt(2); // 0 for addition, 1 for multiplication
+        int firstNumber, secondNumber, correctAnswer, wrongAnswer, bound;
+        int operation = r.nextInt(3); // 0 for addition, 1 for multiplication, 2 subtraction
         choice1 = findViewById(R.id.choice1TextView);
         choice2 = findViewById(R.id.choice2TextView);
         choice3 = findViewById(R.id.choice3TextView);
         choice4 = findViewById(R.id.choice4TextView);
 
-        if (operation == 0) {
-            firstNumber = r.nextInt(30);
-            secondNumber = r.nextInt(30);
+        if (operation == 0) { // addition question
+            firstNumber = r.nextInt(51);
+            secondNumber = r.nextInt(51);
             correctAnswer = firstNumber + secondNumber;
+            bound = 111;
             questionTextView.setText("" + firstNumber + " + " + secondNumber);
-        } else {
-            firstNumber = r.nextInt(10);
-            secondNumber = r.nextInt(10);
+        } else if (operation == 1) { // multiplication question
+            firstNumber = r.nextInt(11);
+            secondNumber = r.nextInt(11);
             correctAnswer = firstNumber * secondNumber;
+            bound = 111;
             questionTextView.setText("" + firstNumber + " x " + secondNumber);
+        } else { // subtraction question
+            firstNumber = r.nextInt(31);
+            secondNumber = r.nextInt(31);
+            while (secondNumber > firstNumber)
+                secondNumber = r.nextInt(11);
+            correctAnswer = firstNumber - secondNumber;
+            bound = 31;
+            questionTextView.setText("" + firstNumber + " - " + secondNumber);
         }
-
-        if (correctAnswerGrid == 0) {
-            choice1.setText("" + correctAnswer);
-            choice2.setText("" + r.nextInt(60));
-            choice3.setText("" + r.nextInt(60));
-            choice4.setText("" + r.nextInt(60));
-        } else if (correctAnswerGrid == 1) {
-            choice1.setText("" + r.nextInt(60));
-            choice2.setText("" + correctAnswer);
-            choice3.setText("" + r.nextInt(60));
-            choice4.setText("" + r.nextInt(60));
-        } else if (correctAnswerGrid == 2) {
-            choice1.setText("" + r.nextInt(60));
-            choice2.setText("" + r.nextInt(60));
-            choice3.setText("" + correctAnswer);
-            choice4.setText("" + r.nextInt(60));
-        } else {
-            choice1.setText("" + r.nextInt(60));
-            choice2.setText("" + r.nextInt(60));
-            choice3.setText("" + r.nextInt(60));
-            choice4.setText("" + correctAnswer);
+        for (int i = 0; i < 4; i++) {
+            if (i == correctAnswerGrid) {
+                answers.add(correctAnswer);
+            } else {
+                wrongAnswer = r.nextInt(bound);
+                while (wrongAnswer == correctAnswer || answers.contains(wrongAnswer)) { // prevent duplicate answers
+                    wrongAnswer = r.nextInt(bound);
+                }
+                answers.add(wrongAnswer);
+            }
         }
+        choice1.setText(Integer.toString(answers.get(0)));
+        choice2.setText(Integer.toString(answers.get(1)));
+        choice3.setText(Integer.toString(answers.get(2)));
+        choice4.setText(Integer.toString(answers.get(3)));
+        answers.clear(); // to prevent next game from having previous question's answers
     }
+
 
     public void startTraining() {
         if (!timerOn) {
@@ -103,7 +111,7 @@ public class MainActivity extends AppCompatActivity {
             resultTextView = findViewById(R.id.resultTextView);
             resultTextView.setText("");
             playAgainButton.setVisibility(View.INVISIBLE);
-            CountDownTimer cdt = new CountDownTimer(15_000, 1000) {
+            CountDownTimer cdt = new CountDownTimer(60_000, 1000) {
                 public void onTick(long l) {
                     timerTextView.setText((l / 1000) + "s");
                 }
@@ -117,14 +125,14 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void playAgain(View view){
+    public void playAgain(View view) {
         correctAnswers = 0;
         totalAnswers = 0;
         startTraining();
         generateQuestion();
     }
 
-    public void start(View view){
+    public void start(View view) {
         ConstraintLayout gameLayout = findViewById(R.id.gameLayout);
         Button startButton = findViewById(R.id.startButton);
         startButton.setVisibility(View.INVISIBLE);
