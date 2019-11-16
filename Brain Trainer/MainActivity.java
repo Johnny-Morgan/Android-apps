@@ -53,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void generateQuestion() {
         int firstNumber, secondNumber, correctAnswer, wrongAnswer, bound;
-        int operation = r.nextInt(3); // 0 for addition, 1 for multiplication, 2 subtraction
+        int operation = r.nextInt(4); // 0 for addition, 1 for multiplication, 2 subtraction, 3 division
         choice1 = findViewById(R.id.choice1TextView);
         choice2 = findViewById(R.id.choice2TextView);
         choice3 = findViewById(R.id.choice3TextView);
@@ -71,7 +71,7 @@ public class MainActivity extends AppCompatActivity {
             correctAnswer = firstNumber * secondNumber;
             bound = 111;
             questionTextView.setText("" + firstNumber + " x " + secondNumber);
-        } else { // subtraction question
+        } else if (operation == 2){ // subtraction question
             firstNumber = r.nextInt(31);
             secondNumber = r.nextInt(31);
             while (secondNumber > firstNumber)
@@ -79,6 +79,15 @@ public class MainActivity extends AppCompatActivity {
             correctAnswer = firstNumber - secondNumber;
             bound = 31;
             questionTextView.setText("" + firstNumber + " - " + secondNumber);
+        }
+        else { // division question
+            firstNumber = r.nextInt(101);
+            secondNumber = r.nextInt(101);
+            while (isSuitable(firstNumber, secondNumber))
+                secondNumber = r.nextInt(101);
+            correctAnswer = firstNumber / secondNumber;
+            bound = 21;
+            questionTextView.setText("" + firstNumber + " " + '\u00F7' + " " + secondNumber);
         }
         for (int i = 0; i < 4; i++) {
             if (i == correctAnswerGrid) {
@@ -98,6 +107,9 @@ public class MainActivity extends AppCompatActivity {
         answers.clear(); // to prevent next game from having previous question's answers
     }
 
+    public boolean isSuitable(int num1, int num2){
+        return (num1 == 0 || num1 == 1 || num2 == 0 || num2 == 1 || num2 > num1 || num1 % num2 != 0);
+    }
 
     public void startTraining() {
         if (!timerOn) {
