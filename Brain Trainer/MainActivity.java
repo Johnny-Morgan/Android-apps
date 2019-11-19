@@ -2,6 +2,7 @@ package dev.johnmorgan.braintrainer;
 
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -62,18 +63,22 @@ public class MainActivity extends AppCompatActivity {
         if (operation == 0) { // addition question
             firstNumber = r.nextInt(51);
             secondNumber = r.nextInt(51);
+            Log.i("+", ""+firstNumber + " " + secondNumber);
             correctAnswer = firstNumber + secondNumber;
             bound = 111;
             questionTextView.setText("" + firstNumber + " + " + secondNumber);
+
         } else if (operation == 1) { // multiplication question
-            firstNumber = r.nextInt(11);
-            secondNumber = r.nextInt(11);
+            firstNumber = r.nextInt(10) + 1;
+            secondNumber = r.nextInt(10) + 1;
+            Log.i("x", ""+firstNumber + " " + secondNumber);
             correctAnswer = firstNumber * secondNumber;
             bound = 111;
             questionTextView.setText("" + firstNumber + " x " + secondNumber);
         } else if (operation == 2){ // subtraction question
             firstNumber = r.nextInt(31);
             secondNumber = r.nextInt(31);
+            Log.i("-", ""+firstNumber + " " + secondNumber);
             while (secondNumber > firstNumber)
                 secondNumber = r.nextInt(11);
             correctAnswer = firstNumber - secondNumber;
@@ -83,8 +88,11 @@ public class MainActivity extends AppCompatActivity {
         else { // division question
             firstNumber = r.nextInt(101);
             secondNumber = r.nextInt(101);
-            while (isSuitable(firstNumber, secondNumber))
+            Log.i("/", ""+firstNumber + " " + secondNumber);
+            while (isSuitable(firstNumber, secondNumber)) {
+                firstNumber = r.nextInt(101);
                 secondNumber = r.nextInt(101);
+            }
             correctAnswer = firstNumber / secondNumber;
             bound = 21;
             questionTextView.setText("" + firstNumber + " " + '\u00F7' + " " + secondNumber);
@@ -108,7 +116,16 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public boolean isSuitable(int num1, int num2){
-        return (num1 == 0 || num1 == 1 || num2 == 0 || num2 == 1 || num2 > num1 || num1 % num2 != 0);
+         return (num1 == 0 || num1 == 1 || num2 == 0 || num2 == 1 || num2 > num1 || num1 % num2 != 0 || num1 == num2 || isAPrime(num1));
+    }
+
+    public static boolean isAPrime(int num) {
+        for (int i = 2; i <= num / 2; i++) {
+            if (num % i == 0) {
+                return false;
+            }
+        }
+        return true;
     }
 
     public void startTraining() {
