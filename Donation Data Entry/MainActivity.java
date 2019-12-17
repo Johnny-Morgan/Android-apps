@@ -15,7 +15,7 @@ public class MainActivity extends AppCompatActivity {
     public void createDonation(View view) {
         EditText donator = findViewById(R.id.donatorEditText);
         EditText date = findViewById(R.id.dateEditText);
-        Intent intent = new Intent(getApplicationContext(), secondActivity.class);
+        Intent intent = new Intent(getApplicationContext(), SecondActivity.class);
         intent.putExtra("donator", donator.getEditableText().toString() + " " + date.getEditableText().toString());
         startActivity(intent);
     }

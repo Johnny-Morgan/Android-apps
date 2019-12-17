@@ -2,7 +2,6 @@ package dev.johnmorgan.donationdataentry;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.RadioGroup;
@@ -37,23 +36,23 @@ public class ThirdActivity extends AppCompatActivity {
         message += " Pack units per case: " + unitsPerCase.getEditableText().toString()
                 + " Total cases: " + totalCases.getEditableText().toString();
 
-        Intent intent = new Intent(getApplicationContext(), SecondActivity.class);
+        Intent intent = new Intent(getApplicationContext(), FourthActivity.class);
         intent.putExtra("details", message);
         startActivity(intent);
     }
 
     public void onRadioButtonClicked(int button) {
         switch (button) {
-            case 2131165290:
+            case R.id.radio_kg:
                 message += "kg";
                 break;
-            case 2131165289:
+            case R.id.radio_g:
                 message += "g";
                 break;
-            case 2131165291:
+            case R.id.radio_litre:
                 message += "ltr";
                 break;
-            case 2131165292:
+            case R.id.radio_ml:
                 message += "ml";
                 break;
         }
