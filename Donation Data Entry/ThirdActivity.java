@@ -34,7 +34,19 @@ public class ThirdActivity extends AppCompatActivity {
         onRadioButtonClicked(selectedButton);
 
         message += " Pack units per case: " + unitsPerCase.getEditableText().toString()
-                + " Total cases: " + totalCases.getEditableText().toString();
+                + " Total cases: " + totalCases.getEditableText().toString() + " ";
+
+        double unitWeightDouble = Double.parseDouble(unitWeight.getEditableText().toString());
+        int unitsPerCaseInt = Integer.parseInt(unitsPerCase.getEditableText().toString());
+        int totalWeight = (int) (Math.round(unitWeightDouble * unitsPerCaseInt));
+
+        message += brand.getEditableText().toString() + " " + description.getEditableText().toString()
+                + " " + unitWeightDouble;
+
+        onRadioButtonClicked(selectedButton); // append units
+        
+        message += " X " + unitsPerCaseInt
+                + " = " + totalWeight;
 
         Intent intent = new Intent(getApplicationContext(), FourthActivity.class);
         intent.putExtra("details", message);
