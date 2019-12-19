@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.RadioGroup;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -17,8 +18,10 @@ public class ThirdActivity extends AppCompatActivity {
     EditText unitsPerCase;
     EditText totalCases;
     RadioGroup units;
+    boolean isMillilitres;
+    boolean isGrams;
 
-    public void addProduct(View view) {
+    public void continueButtonClicked(View view) {
         brand = findViewById(R.id.brandEditText);
         description = findViewById(R.id.descriptionEditText);
         unitWeight = findViewById(R.id.unitWeightEditText);
@@ -38,18 +41,34 @@ public class ThirdActivity extends AppCompatActivity {
 
         double unitWeightDouble = Double.parseDouble(unitWeight.getEditableText().toString());
         int unitsPerCaseInt = Integer.parseInt(unitsPerCase.getEditableText().toString());
-        int totalWeight = (int) (Math.round(unitWeightDouble * unitsPerCaseInt));
+        int totalWeight;
+
+        if (isGrams || isMillilitres) {
+            totalWeight = (int) (Math.round((unitWeightDouble / 1000) * unitsPerCaseInt));
+        } else {
+            totalWeight = (int) (Math.round(unitWeightDouble * unitsPerCaseInt));
+        }
+
+        if (totalWeight == 0) { // ensure min weight is 1
+            totalWeight = 1;
+        }
 
         message += brand.getEditableText().toString() + " " + description.getEditableText().toString()
                 + " " + unitWeightDouble;
 
         onRadioButtonClicked(selectedButton); // append units
-        
+
         message += " X " + unitsPerCaseInt
                 + " = " + totalWeight;
 
+        if (brand.getEditableText().toString().equals("") || description.getEditableText().toString().equals("")
+                || unitWeight.getEditableText().toString().equals("") || unitsPerCase.getEditableText().toString().equals("") ||
+                totalCases.getEditableText().toString().equals("")) {
+            Toast.makeText(this, "All fields must be filled", Toast.LENGTH_SHORT).show();
+        }
+
         Intent intent = new Intent(getApplicationContext(), FourthActivity.class);
-        intent.putExtra("details", message);
+        intent.putExtra("details", message.toUpperCase());
         startActivity(intent);
     }
 
@@ -60,12 +79,14 @@ public class ThirdActivity extends AppCompatActivity {
                 break;
             case R.id.radio_g:
                 message += "g";
+                isGrams = true;
                 break;
             case R.id.radio_litre:
                 message += "ltr";
                 break;
             case R.id.radio_ml:
                 message += "ml";
+                isMillilitres = true;
                 break;
         }
     }
