@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.icu.text.SimpleDateFormat;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -16,7 +17,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
-public class FourthActivity extends AppCompatActivity {
+public class FourthActivity extends AppCompatActivity implements View.OnKeyListener {
 
     EditText frozenUntilDate;
     EditText location;
@@ -55,6 +56,7 @@ public class FourthActivity extends AppCompatActivity {
         usebyDate = findViewById(R.id.usebyEditText);
         location = findViewById(R.id.locationEditText);
         RadioGroup rg = findViewById(R.id.locationRadioGroup);
+        location.setOnKeyListener(this);
 
         rg.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
@@ -110,5 +112,13 @@ public class FourthActivity extends AppCompatActivity {
                         myCalendar.get(Calendar.DAY_OF_MONTH)).show();
             }
         });
+    }
+
+    @Override
+    public boolean onKey(View v, int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_ENTER && event.getAction() == KeyEvent.ACTION_DOWN) {
+            addEntryButtonClicked(v);
+        }
+        return false;
     }
 }

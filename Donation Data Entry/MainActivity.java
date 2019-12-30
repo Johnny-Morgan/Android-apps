@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.icu.text.SimpleDateFormat;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -17,7 +18,7 @@ import android.widget.Toast;
 import java.util.Calendar;
 import java.util.Locale;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements View.OnKeyListener {
 
     EditText donator;
     EditText dateEditText;
@@ -33,10 +34,10 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void updateLabel() {
+    public void updateLabel(EditText editText) {
         String myFormat = "dd/MM/yyyy";
         SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.getDefault());
-        dateEditText.setText(sdf.format(myCalendar.getTime()));
+        editText.setText(sdf.format(myCalendar.getTime()));
     }
 
     @Override
@@ -46,6 +47,7 @@ public class MainActivity extends AppCompatActivity {
 
         donator = findViewById(R.id.donatorEditText);
         dateEditText = findViewById(R.id.dateEditText);
+        donator.setOnKeyListener(this);
 
         final DatePickerDialog.OnDateSetListener date = new DatePickerDialog.OnDateSetListener() {
             @Override
@@ -53,7 +55,7 @@ public class MainActivity extends AppCompatActivity {
                 myCalendar.set(Calendar.YEAR, year);
                 myCalendar.set(Calendar.MONTH, month);
                 myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-                updateLabel();
+                updateLabel(dateEditText);
             }
         };
 
@@ -67,6 +69,13 @@ public class MainActivity extends AppCompatActivity {
                         myCalendar.get(Calendar.DAY_OF_MONTH)).show();
             }
         });
+    }
 
+    @Override
+    public boolean onKey(View v, int keyCode, KeyEvent event) {
+        if(keyCode == KeyEvent.KEYCODE_ENTER && event.getAction() == KeyEvent.ACTION_DOWN) {
+            createDonation(v);
+        }
+        return false;
     }
 }
