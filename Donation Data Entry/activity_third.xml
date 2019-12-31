@@ -2,9 +2,9 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/backgroundLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:onClick="addProduct"
     tools:context=".ThirdActivity">
 
     <TextView
@@ -96,7 +96,7 @@
         app:layout_constraintStart_toStartOf="@+id/descriptionEditText" />
 
     <RadioGroup
-        android:id="@+id/unitsRadioGroup"
+        android:id="@+id/locationRadioGroup"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
@@ -109,6 +109,7 @@
             android:id="@+id/radio_kg"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:checked="true"
             android:text="kg" />
 
         <RadioButton
@@ -146,7 +147,7 @@
         android:layout_marginEnd="32dp"
         android:ems="10"
         android:inputType="number"
-        app:layout_constraintBottom_toBottomOf="@+id/textView6"
+        app:layout_constraintBaseline_toBaselineOf="@+id/textView6"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="@+id/unitWeightEditText" />
@@ -178,6 +179,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
+        android:onClick="continueButtonClicked"
         android:text="Continue"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

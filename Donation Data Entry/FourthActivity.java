@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.RadioGroup;
@@ -17,7 +18,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
-public class FourthActivity extends AppCompatActivity implements View.OnKeyListener {
+public class FourthActivity extends AppCompatActivity implements View.OnKeyListener, View.OnClickListener {
 
     EditText frozenUntilDate;
     EditText location;
@@ -120,5 +121,13 @@ public class FourthActivity extends AppCompatActivity implements View.OnKeyListe
             addEntryButtonClicked(v);
         }
         return false;
+    }
+
+    @Override
+    public void onClick(View v) {
+        if (v.getId() == R.id.backgroundLayout) { // remove keyboard when user clicks outside of keyboard
+            InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+            inputMethodManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+        }
     }
 }

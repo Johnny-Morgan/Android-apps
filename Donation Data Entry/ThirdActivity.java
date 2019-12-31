@@ -4,13 +4,14 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-public class ThirdActivity extends AppCompatActivity implements View.OnKeyListener {
+public class ThirdActivity extends AppCompatActivity implements View.OnKeyListener, View.OnClickListener {
 
     String message = "";
     EditText brand;
@@ -105,5 +106,13 @@ public class ThirdActivity extends AppCompatActivity implements View.OnKeyListen
             continueButtonClicked(v);
         }
         return false;
+    }
+
+    @Override
+    public void onClick(View v) {
+        if(v.getId() == R.id.backgroundLayout) { // remove keyboard when user clicks outside of keyboard
+            InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+            inputMethodManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+        }
     }
 }

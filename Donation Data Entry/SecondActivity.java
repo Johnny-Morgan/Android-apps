@@ -2,6 +2,7 @@ package dev.johnmorgan.donationdataentry;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
@@ -30,6 +31,7 @@ public class SecondActivity extends AppCompatActivity {
 
         if (intent2.getStringExtra("details") != null) {
             products.add(intent2.getStringExtra("details"));
+            Log.i("w", intent2.getStringExtra("details"));
         }
     }
 

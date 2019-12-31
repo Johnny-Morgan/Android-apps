@@ -1,24 +1,23 @@
 package dev.johnmorgan.donationdataentry;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.icu.text.SimpleDateFormat;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.Button;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
+
 import java.util.Calendar;
 import java.util.Locale;
 
-public class MainActivity extends AppCompatActivity implements View.OnKeyListener {
+public class MainActivity extends AppCompatActivity implements View.OnKeyListener, View.OnClickListener {
 
     EditText donator;
     EditText dateEditText;
@@ -48,6 +47,8 @@ public class MainActivity extends AppCompatActivity implements View.OnKeyListene
         donator = findViewById(R.id.donatorEditText);
         dateEditText = findViewById(R.id.dateEditText);
         donator.setOnKeyListener(this);
+        ConstraintLayout backgroundLayout = findViewById(R.id.backgroundLayout);
+        backgroundLayout.setOnClickListener(this);
 
         final DatePickerDialog.OnDateSetListener date = new DatePickerDialog.OnDateSetListener() {
             @Override
@@ -77,5 +78,13 @@ public class MainActivity extends AppCompatActivity implements View.OnKeyListene
             createDonation(v);
         }
         return false;
+    }
+
+    @Override
+    public void onClick(View v) {
+        if(v.getId() == R.id.backgroundLayout) { // remove keyboard when user clicks outside of keyboard
+            InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+            inputMethodManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+        }
     }
 }
