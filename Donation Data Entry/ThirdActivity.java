@@ -10,6 +10,7 @@ import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 
 public class ThirdActivity extends AppCompatActivity implements View.OnKeyListener, View.OnClickListener {
 
@@ -22,6 +23,8 @@ public class ThirdActivity extends AppCompatActivity implements View.OnKeyListen
     RadioGroup units;
     boolean isMillilitres;
     boolean isGrams;
+    boolean isKilograms;
+    boolean isLitres;
 
 
     public void continueButtonClicked(View view) {
@@ -35,21 +38,13 @@ public class ThirdActivity extends AppCompatActivity implements View.OnKeyListen
                 totalCases.getEditableText().toString().equals("")) {
             Toast.makeText(this, "All fields must be filled", Toast.LENGTH_SHORT).show();
         } else {
-            message += "Brand: " + brand.getEditableText().toString()
-                    + " Description: " + description.getEditableText().toString()
-                    + " Unit pack weight: " + unitWeight.getEditableText().toString();
-
             units = findViewById(R.id.locationRadioGroup);
             int selectedButton = units.getCheckedRadioButtonId();
-            onRadioButtonClicked(selectedButton);
-
-            message += " Pack units per case: " + unitsPerCase.getEditableText().toString()
-                    + " Total cases: " + totalCases.getEditableText().toString() + " ";
-
             double unitWeightDouble = Double.parseDouble(unitWeight.getEditableText().toString());
             int unitsPerCaseInt = Integer.parseInt(unitsPerCase.getEditableText().toString());
             int totalWeight;
 
+            onRadioButtonClicked(selectedButton);
             if (isGrams || isMillilitres) {
                 totalWeight = (int) (Math.round((unitWeightDouble / 1000) * unitsPerCaseInt));
             } else {
@@ -59,11 +54,21 @@ public class ThirdActivity extends AppCompatActivity implements View.OnKeyListen
             if (totalWeight == 0) { // ensure min weight is 1
                 totalWeight = 1;
             }
+            int quantity = totalWeight * Integer.parseInt(totalCases.getEditableText().toString());
 
-            message += brand.getEditableText().toString() + " " + description.getEditableText().toString()
+            message += "Quantity: " + quantity + "\n"
+                    + "Size: " + totalWeight + "\n"
+                    + brand.getEditableText().toString() + " " + description.getEditableText().toString()
                     + " " + unitWeightDouble;
 
-            onRadioButtonClicked(selectedButton); // append units
+            if (isKilograms)
+                message += "kg";
+            else if (isGrams)
+                message += "g";
+            else if (isLitres)
+                message += "ltr";
+            else
+                message += "ml";
 
             message += " X " + unitsPerCaseInt
                     + " = " + totalWeight;
@@ -76,17 +81,15 @@ public class ThirdActivity extends AppCompatActivity implements View.OnKeyListen
     public void onRadioButtonClicked(int button) {
         switch (button) {
             case R.id.radio_kg:
-                message += "kg";
+                isKilograms = true;
                 break;
             case R.id.radio_g:
-                message += "g";
                 isGrams = true;
                 break;
             case R.id.radio_litre:
-                message += "ltr";
+                isLitres = true;
                 break;
             case R.id.radio_ml:
-                message += "ml";
                 isMillilitres = true;
                 break;
         }
@@ -98,6 +101,8 @@ public class ThirdActivity extends AppCompatActivity implements View.OnKeyListen
         setContentView(R.layout.activity_third);
         totalCases = findViewById(R.id.totalCasesEditText);
         totalCases.setOnKeyListener(this);
+        ConstraintLayout backgroundLayout = findViewById(R.id.backgroundLayout);
+        backgroundLayout.setOnClickListener(this);
     }
 
     @Override
@@ -110,7 +115,7 @@ public class ThirdActivity extends AppCompatActivity implements View.OnKeyListen
 
     @Override
     public void onClick(View v) {
-        if(v.getId() == R.id.backgroundLayout) { // remove keyboard when user clicks outside of keyboard
+        if (v.getId() == R.id.backgroundLayout) { // remove keyboard when user clicks outside of keyboard
             InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
             inputMethodManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
         }
