@@ -10,9 +10,12 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -29,18 +32,32 @@ public class FourthActivity extends AppCompatActivity implements View.OnKeyListe
     boolean isFrozen;
     boolean outOfDate;
     final Calendar myCalendar = Calendar.getInstance();
+    RadioButton frozenRadioButton;
 
     public void addEntryButtonClicked(View view) {
-        Intent intent = getIntent();
-        String message = intent.getStringExtra("details");
-        if (isFrozen)
-            message += " FROZEN ON " + formattedDate + " BB: " + frozenUntilDate.getEditableText().toString();
-        if (outOfDate)
-            message += " BB: " + usebyDate.getEditableText().toString();
-        Log.i("message", message);
-        Intent intent2 = new Intent(getApplicationContext(), SecondActivity.class);
-        intent2.putExtra("details", message.toUpperCase());
-        startActivity(intent2);
+        if (usebyDate.getEditableText().toString().equals("")) {
+            Toast.makeText(this, "Use by date must be filled", Toast.LENGTH_SHORT).show();
+        } else if (frozenRadioButton.isChecked() && frozenUntilDate.getEditableText().toString().equals("")) {
+            Toast.makeText(this, "Frozen until date must be filled", Toast.LENGTH_SHORT).show();
+        } else {
+            Intent intent = getIntent();
+            String message = intent.getStringExtra("details");
+            if (isFrozen) {
+                message += " FROZEN ON " + formattedDate + " BB: " + frozenUntilDate.getEditableText().toString();
+            }
+            if (outOfDate) {
+                String[] dateParts = formattedDate.split("/");
+                String day = dateParts[0];
+                String month = dateParts[1];
+                String year = "2099";
+                message += " BB: " + usebyDate.getEditableText().toString()
+                        + "\nUse By: " + day + "/" + month + "/" + year;
+            }
+            Log.i("message", message);
+            Intent intent2 = new Intent(getApplicationContext(), SecondActivity.class);
+            intent2.putExtra("details", message.toUpperCase());
+            startActivity(intent2);
+        }
     }
 
     public void updateLabel(EditText editText) {
@@ -58,6 +75,9 @@ public class FourthActivity extends AppCompatActivity implements View.OnKeyListe
         location = findViewById(R.id.locationEditText);
         RadioGroup rg = findViewById(R.id.locationRadioGroup);
         location.setOnKeyListener(this);
+        ConstraintLayout backgroundLayout = findViewById(R.id.backgroundLayout);
+        backgroundLayout.setOnClickListener(this);
+        frozenRadioButton = findViewById(R.id.radio_freezer);
 
         rg.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
