@@ -33,25 +33,34 @@ public class FourthActivity extends AppCompatActivity implements View.OnKeyListe
     boolean outOfDate;
     final Calendar myCalendar = Calendar.getInstance();
     RadioButton frozenRadioButton;
+    RadioButton ambientRadioButton;
+    RadioButton fridgeRadioButton;
 
     public void addEntryButtonClicked(View view) {
         if (usebyDate.getEditableText().toString().equals("")) {
             Toast.makeText(this, "Use by date must be filled", Toast.LENGTH_SHORT).show();
         } else if (frozenRadioButton.isChecked() && frozenUntilDate.getEditableText().toString().equals("")) {
             Toast.makeText(this, "Frozen until date must be filled", Toast.LENGTH_SHORT).show();
+        } else if (ambientRadioButton.isChecked() && location.getEditableText().toString().equals("")) {
+            Toast.makeText(this, "Location must be filled", Toast.LENGTH_SHORT).show();
+        } else if (!ambientRadioButton.isChecked() && !fridgeRadioButton.isChecked() && !frozenRadioButton.isChecked()) {
+            Toast.makeText(this, "Location Type must be filled", Toast.LENGTH_SHORT).show();
         } else {
             Intent intent = getIntent();
             String message = intent.getStringExtra("details");
             if (isFrozen) {
                 message += " FROZEN ON " + formattedDate + " BB: " + frozenUntilDate.getEditableText().toString();
             }
-            if (outOfDate) {
+            else if (outOfDate) {
                 String[] dateParts = formattedDate.split("/");
                 String day = dateParts[0];
                 String month = dateParts[1];
                 String year = "2099";
                 message += " BB: " + usebyDate.getEditableText().toString()
                         + "\nUse By: " + day + "/" + month + "/" + year;
+            }
+            else {
+                message += "\nUse By: " + usebyDate.getEditableText().toString();
             }
             Log.i("message", message);
             Intent intent2 = new Intent(getApplicationContext(), SecondActivity.class);
@@ -78,6 +87,8 @@ public class FourthActivity extends AppCompatActivity implements View.OnKeyListe
         ConstraintLayout backgroundLayout = findViewById(R.id.backgroundLayout);
         backgroundLayout.setOnClickListener(this);
         frozenRadioButton = findViewById(R.id.radio_freezer);
+        ambientRadioButton = findViewById(R.id.radio_ambient);
+        fridgeRadioButton = findViewById(R.id.radio_fridge);
 
         rg.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
