@@ -50,22 +50,22 @@ public class FourthActivity extends AppCompatActivity implements View.OnKeyListe
             String message = intent.getStringExtra("details");
             if (isFrozen) {
                 message += " FROZEN ON " + formattedDate + " BB: " + frozenUntilDate.getEditableText().toString();
-            }
-            else if (outOfDate) {
+            } else if (outOfDate) {
                 String[] dateParts = formattedDate.split("/");
                 String day = dateParts[0];
                 String month = dateParts[1];
                 String year = "2099";
                 message += " BB: " + usebyDate.getEditableText().toString()
                         + "\nUse By: " + day + "/" + month + "/" + year;
-            }
-            else {
+            } else {
                 message += "\nUse By: " + usebyDate.getEditableText().toString();
             }
             Log.i("message", message);
-            Intent intent2 = new Intent(getApplicationContext(), SecondActivity.class);
+
+            Intent intent2 = new Intent();
             intent2.putExtra("details", message.toUpperCase());
-            startActivity(intent2);
+            setResult(RESULT_OK, intent2);
+            finish();
         }
     }
 

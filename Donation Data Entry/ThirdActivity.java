@@ -72,9 +72,12 @@ public class ThirdActivity extends AppCompatActivity implements View.OnKeyListen
 
             message += " X " + unitsPerCaseInt
                     + " = " + totalWeight;
+            
             Intent intent = new Intent(getApplicationContext(), FourthActivity.class);
             intent.putExtra("details", message.toUpperCase());
+            intent.addFlags(Intent.FLAG_ACTIVITY_FORWARD_RESULT);
             startActivity(intent);
+            finish();
         }
     }
 
