@@ -31,10 +31,12 @@ public class FourthActivity extends AppCompatActivity implements View.OnKeyListe
     String formattedDate = sdf.format(today);
     boolean isFrozen;
     boolean outOfDate;
+    boolean isAmbient;
     final Calendar myCalendar = Calendar.getInstance();
     RadioButton frozenRadioButton;
     RadioButton ambientRadioButton;
     RadioButton fridgeRadioButton;
+    String locationType;
 
     public void addEntryButtonClicked(View view) {
         if (usebyDate.getEditableText().toString().equals("")) {
@@ -49,16 +51,27 @@ public class FourthActivity extends AppCompatActivity implements View.OnKeyListe
             Intent intent = getIntent();
             String message = intent.getStringExtra("details");
             if (isFrozen) {
+                message = "Use By: " + frozenUntilDate.getEditableText().toString() + "\nLocation Type: Freezer\n" + message;
                 message += " FROZEN ON " + formattedDate + " BB: " + frozenUntilDate.getEditableText().toString();
             } else if (outOfDate) {
                 String[] dateParts = formattedDate.split("/");
                 String day = dateParts[0];
                 String month = dateParts[1];
                 String year = "2099";
-                message += " BB: " + usebyDate.getEditableText().toString()
-                        + "\nUse By: " + day + "/" + month + "/" + year;
+                message += " BB: " + usebyDate.getEditableText().toString();
+                message = "\nUse By: " + day + "/" + month + "/" + year
+                        + "\nLocation Type: Ambient Location: " + location.getEditableText().toString()
+                        + "\n" + message;
             } else {
-                message += "\nUse By: " + usebyDate.getEditableText().toString();
+                if (isAmbient) {
+                    message = "\nUse By: " + usebyDate.getEditableText().toString()
+                            + "\nLocation Type: " + locationType + " Location: " + location.getEditableText().toString()
+                            + "\n" + message;
+                } else {
+                    message = "\nUse By: " + usebyDate.getEditableText().toString()
+                            + "\nLocation Type: " + locationType
+                            + "\n" + message;
+                }
             }
             Log.i("message", message);
 
@@ -99,9 +112,12 @@ public class FourthActivity extends AppCompatActivity implements View.OnKeyListe
                     frozenUntilDate.setEnabled(true);
                     location.setEnabled(false);
                     isFrozen = true;
+                    locationType = "Freezer";
                 } else if (checkedId == R.id.radio_ambient) {
                     location.setEnabled(true);
                     frozenUntilDate.setEnabled(false);
+                    locationType = "Ambient";
+                    isAmbient = true;
                     try {
                         d1 = sdf.parse(usebyDate.getEditableText().toString());
                     } catch (Exception e) {
@@ -116,6 +132,7 @@ public class FourthActivity extends AppCompatActivity implements View.OnKeyListe
                 } else {
                     frozenUntilDate.setEnabled(false);
                     location.setEnabled(false);
+                    locationType = "Chill";
                 }
             }
         });
