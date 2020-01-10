@@ -1,34 +1,32 @@
 package dev.johnmorgan.donationdataentry;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
-import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Logger;
 
 public class SecondActivity extends AppCompatActivity {
 
+    private static final String FILE_NAME = "output.txt";
     List<String> products = new ArrayList<>();
     ListView productListView;
     ArrayAdapter<String> arrayAdapter;
 
+
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_second);
         productListView = findViewById(R.id.detailsListView);
@@ -47,8 +45,11 @@ public class SecondActivity extends AppCompatActivity {
         finishButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // test - check if first item in products is written to file
-                writeToFile(products.get(0), "C:\\Users\\jwjmo\\AndroidStudioProjects\\DonationDataEntry\\app\\output", getApplicationContext());
+                if (products.size() == 0) {
+                    Toast.makeText(SecondActivity.this, "No data", Toast.LENGTH_SHORT).show();
+                } else {
+                    save();
+                }
             }
         });
     }
@@ -65,13 +66,28 @@ public class SecondActivity extends AppCompatActivity {
         }
     }
 
-    public static void writeToFile(final String fileContents, String fileName,  Context context) {
+    public void save() {
+        FileOutputStream fos = null;
+
         try {
-            FileWriter out = new FileWriter(new File(context.getFilesDir(), fileName));
-            out.write(fileContents);
-            out.close();
+            fos = openFileOutput(FILE_NAME, MODE_PRIVATE);
+            for (String product : products) {
+                fos.write(product.getBytes());
+            }
+            Toast.makeText(this, "Saved to " + getFilesDir() + "/" + FILE_NAME, Toast.LENGTH_SHORT).show();
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
         } catch (IOException e) {
-            Log.e("Exception", "File write failed: " + e.toString());
+            e.printStackTrace();
+        } finally {
+            if (fos != null) {
+                try {
+                    fos.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
 }
