@@ -1,25 +1,34 @@
 package dev.johnmorgan.bluetoothfinderapp;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
+import android.Manifest;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
+
+import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
     ListView listView;
     TextView statusTextView;
     Button searchButton;
+    ArrayList<String> bluetoothDevices = new ArrayList<>();
+    ArrayAdapter arrayAdapter;
     BluetoothAdapter bluetoothAdapter;
 
     private final BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
@@ -31,6 +40,22 @@ public class MainActivity extends AppCompatActivity {
             if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
                 statusTextView.setText("Finished...");
                 searchButton.setEnabled(true);
+            } else if (BluetoothDevice.ACTION_FOUND.equals(action)) {
+                BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+                String name = device.getName();
+                String address = device.getAddress();
+                String rssi = Integer.toString(intent.getShortExtra(BluetoothDevice.EXTRA_RSSI, Short.MIN_VALUE));
+                Log.i("Device found", "Name: " + name + " Address: " + address + " RSSI: " + rssi);
+                String deviceString;
+                if (name == null || name.equals("")) {
+                    deviceString = address + " - RSSI " + rssi + "dBm";
+                } else {
+                    deviceString = name + " - RSSI " + rssi + "dBm";
+                }
+                if (!bluetoothDevices.contains(deviceString)) { // make sure device is not already in arrayList
+                    bluetoothDevices.add(deviceString);
+                }
+                arrayAdapter.notifyDataSetChanged();
             }
         }
     };
@@ -38,6 +63,7 @@ public class MainActivity extends AppCompatActivity {
     public void searchClicked(View view) {
         statusTextView.setText("Searching...");
         searchButton.setEnabled(false);
+        bluetoothDevices.clear(); // remove previous results
         bluetoothAdapter.startDiscovery();
     }
 
@@ -46,9 +72,14 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 0);
+        }
         listView = findViewById(R.id.listView);
         statusTextView = findViewById(R.id.statusTextView);
         searchButton = findViewById(R.id.searchButton);
+        arrayAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, bluetoothDevices);
+        listView.setAdapter(arrayAdapter);
 
         bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
