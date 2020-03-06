@@ -28,6 +28,7 @@ public class MainActivity extends AppCompatActivity {
     TextView statusTextView;
     Button searchButton;
     ArrayList<String> bluetoothDevices = new ArrayList<>();
+    ArrayList<String> addresses = new ArrayList<>();
     ArrayAdapter arrayAdapter;
     BluetoothAdapter bluetoothAdapter;
 
@@ -46,16 +47,18 @@ public class MainActivity extends AppCompatActivity {
                 String address = device.getAddress();
                 String rssi = Integer.toString(intent.getShortExtra(BluetoothDevice.EXTRA_RSSI, Short.MIN_VALUE));
                 Log.i("Device found", "Name: " + name + " Address: " + address + " RSSI: " + rssi);
-                String deviceString;
-                if (name == null || name.equals("")) {
-                    deviceString = address + " - RSSI " + rssi + "dBm";
-                } else {
-                    deviceString = name + " - RSSI " + rssi + "dBm";
-                }
-                if (!bluetoothDevices.contains(deviceString)) { // make sure device is not already in arrayList
+
+                if(!addresses.contains(address)){
+                    addresses.add(address);
+                    String deviceString;
+                    if (name == null || name.equals("")) {
+                        deviceString = address + " - RSSI " + rssi + "dBm";
+                    } else {
+                        deviceString = name + " - RSSI " + rssi + "dBm";
+                    }
                     bluetoothDevices.add(deviceString);
+                    arrayAdapter.notifyDataSetChanged();
                 }
-                arrayAdapter.notifyDataSetChanged();
             }
         }
     };
@@ -64,6 +67,7 @@ public class MainActivity extends AppCompatActivity {
         statusTextView.setText("Searching...");
         searchButton.setEnabled(false);
         bluetoothDevices.clear(); // remove previous results
+        addresses.clear();
         bluetoothAdapter.startDiscovery();
     }
 
@@ -75,6 +79,7 @@ public class MainActivity extends AppCompatActivity {
         if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 0);
         }
+        
         listView = findViewById(R.id.listView);
         statusTextView = findViewById(R.id.statusTextView);
         searchButton = findViewById(R.id.searchButton);
@@ -89,7 +94,5 @@ public class MainActivity extends AppCompatActivity {
         intentFilter.addAction(BluetoothAdapter.ACTION_DISCOVERY_STARTED);
         intentFilter.addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
         registerReceiver(broadcastReceiver, intentFilter);
-
-
     }
 }
